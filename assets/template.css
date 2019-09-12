@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.main {
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+.auth {
+    position: absolute;
+    margin: auto;
+    width: 260px;
+    height: 160px;
+    border: 1px solid gray;
+    top: 10%;
+    left: 0;
+    right: 0;
+    padding: 10px;
+}
+
+.auth_field {
+    display: flex;
+    align-items: center;
+}
+
+.auth_field p {
+    flex: 1;
+}
+
+.auth_field input[type=text] {
+    flex: 2;
+}
+
+.auth button {
+    bottom: 10px;
+    position: absolute;
+    right: 10px;
+    width: 100px;
+}
+
+.hidden {
+    display: none;
+}
