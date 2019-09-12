@@ -31,7 +31,7 @@ class Connection
             throw new Exception('Данный пользователь уже зарегистрирован!');
         }
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        if($hash === false){
+        if ($hash === false) {
             throw new Exception('Ошибка получения хэша пароля');
         }
         $st = $this->conn->prepare('insert into users(login, password) values(:login, :password)');
@@ -67,10 +67,45 @@ class Connection
         $st->execute();
         $res = $st->fetch(PDO::FETCH_ASSOC);
         $hash = $res['password'];
-        if(password_verify($password, $hash) === true) {
+        if (password_verify($password, $hash) === true) {
             return true;
         } else {
             return false;
         }
+    }
+
+    public function getBalans()
+    {
+        $login = $_SESSION['login'];
+        $userInfo = $this->getUser($login);
+        if(empty($userInfo)){
+            throw new Exception('Пользователь не найден!');
+        }
+
+        $st = $this->conn->prepare('select value from billing where user_id=:userId');
+        $st->bindParam('userId', $userInfo['id']);
+        $st->execute();
+        $res = $st->fetch(PDO::FETCH_ASSOC);
+        if ($res !== false) {
+            return $res['value'];
+        } else {
+            return null;
+        }   
+    }
+
+    private function getUser($login)
+    {
+        if(empty($login)){
+            throw new Exception('Значение не должно быть пустым');
+        }
+        $st = $this->conn->prepare('select * from users where login=:login');
+        $st->bindParam('login', $login);
+        $st->execute();
+        $res = $st->fetch(PDO::FETCH_ASSOC);
+        if ($res !== false) {
+            return $res;
+        } else {
+            return null;
+        }  
     }
 }

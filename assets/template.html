@@ -1,26 +1,44 @@
 <!doctype html>
 <html lang=ru>
-    <head>
-        <meta charset="utf8">
-        <title>Тестовое приложение</title>
-        <link href="./assets/template.css" rel="stylesheet">
-    </head>
-    <body>
-        <div class="main">
-            <div class="auth">
-                <div class="auth_field login">
-                    <p>Логин</p>
-                    <input type="text" value="login1">
-                </div>
-                <div class="auth_field password">
-                    <p>Пароль</p>
-                    <input type="password" value="password1">
-                </div>
-                <button class="input" onclick="login()">Вход</button>
-            </div>
 
-            <div class="billing hidden"></div>
+<head>
+    <meta charset="utf8">
+    <title>Тестовое приложение</title>
+    <link href="./assets/template.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="main">
+        <div class="auth">
+            <div class="auth_field login">
+                <p>Логин</p>
+                <input type="text" value="login1">
+            </div>
+            <div class="auth_field password">
+                <p>Пароль</p>
+                <input type="password" value="password1">
+            </div>
+            <button class="input" onclick="login()">Вход</button>
         </div>
-        <script src="./assets/template.js"></script>
-    </body>
+
+        <div class="billing hidden">
+            <div class="logout">
+                <button onclick="logout()">Выйти</button>
+            </div>
+            <div class="billing_main">
+                <div class="billing_main_item balans">
+                    <p><span>Текущий баланс:</span><span class="balans_value"></span></p>
+                </div>
+                <div class="billing_main_item pulloff">
+                    <input type="number">
+                </div>
+                <div class="billing_main_item pulloff_btn">
+                    <input type="button" onclick="pulloff()" value="Вывести">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./assets/template.js"></script>
+</body>
+
 </html>

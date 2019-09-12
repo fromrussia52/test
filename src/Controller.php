@@ -21,7 +21,7 @@ class Controller
         } else {
             $aPath = explode('/', $this->path);
             array_shift($aPath);
-            if ($aPath[0] !== 'api') {
+            if ($aPath[0] !== 'api' || count($aPath) > 2) {
                 throw new Exception('Роут ' . $this->path . ' не найден!', 404);
             }
 
@@ -48,12 +48,24 @@ class Controller
                     break;
 
                 case 'isauth':
-                    if(isset($_SESSION['login'])){
+                    if (isset($_SESSION['login'])) {
                         echo 'true';
-                    }else {
+                    } else {
                         echo 'false';
                     }
                     break;
+
+                case 'logout':
+                    unset($_SESSION['login']);
+                    session_destroy();
+                    echo 'true';
+                    break;
+
+                case 'balans':
+                    echo $this->db->getBalans();
+                    break;
+                default:
+                    throw new Exception('Роут ' . $this->path . ' не найден!', 404);
             }
         }
     }
