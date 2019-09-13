@@ -62,8 +62,23 @@ class Controller
                     break;
 
                 case 'balans':
-                    echo $this->db->getBalans();
+                    $login = $_SESSION['login'];
+                    echo $this->db->getBalans($login);
                     break;
+
+                case 'pulloff':
+                    $value = $_GET['value'];
+                    if (empty($value)) {
+                        throw new Exception('Значение не может быть пустым');
+                    }
+                    if (preg_match('/[0-9]+/i', $value) !== 1) {
+                        throw new Exception('Ошибка валидации значения');
+                    }
+                    $login = $_SESSION['login'];
+                    session_write_close();
+                    echo $this->db->pullOff($value, $login);
+                    break;
+
                 default:
                     throw new Exception('Роут ' . $this->path . ' не найден!', 404);
             }

@@ -11,7 +11,6 @@ document.body.onload = function () {
             if (billingForm) {
                 billingForm.classList.remove('hidden');
             }
-
             getBalans();
         } else {
             if (authForm) {
@@ -45,6 +44,7 @@ function login() {
             if (billingForm) {
                 billingForm.classList.remove('hidden');
             }
+            getBalans();
         } else {
             alert(e.target.response);
         }
@@ -77,12 +77,12 @@ function logout() {
     xhr.send();
 }
 
-function getBalans(){
+function getBalans() {
     //get current balans
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/api/balans');
     xhr.onload = function (e) {
-        if(e.target.status === 200){
+        if (e.target.status === 200) {
             var balansValueDom = document.querySelector('span.balans_value');
             if (balansValueDom) {
                 balansValueDom.innerHTML = e.target.response;
@@ -94,4 +94,25 @@ function getBalans(){
     xhr.send();
 }
 
-function pulloff() { }
+function pulloff() {
+    var valueDom = document.querySelector('div.billing_main_item input[type=number]');
+    var value = null;
+    if (valueDom) {
+        value = Number(valueDom.value);
+    } else {
+        alert('Не найден элемент баланса!');
+        return;
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/api/pulloff?value=' + value);
+    xhr.onload = function (e) {
+        valueDom.value = '';
+        if (e.target.status === 200) {
+            getBalans();
+        } else {
+            alert(e.target.response);
+        }
+    }
+    xhr.send();
+}

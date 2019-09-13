@@ -74,11 +74,10 @@ class Connection
         }
     }
 
-    public function getBalans()
+    public function getBalans($login)
     {
-        $login = $_SESSION['login'];
         $userInfo = $this->getUser($login);
-        if(empty($userInfo)){
+        if (empty($userInfo)) {
             throw new Exception('Пользователь не найден!');
         }
 
@@ -90,12 +89,12 @@ class Connection
             return $res['value'];
         } else {
             return null;
-        }   
+        }
     }
 
     private function getUser($login)
     {
-        if(empty($login)){
+        if (empty($login)) {
             throw new Exception('Значение не должно быть пустым');
         }
         $st = $this->conn->prepare('select * from users where login=:login');
@@ -106,6 +105,37 @@ class Connection
             return $res;
         } else {
             return null;
-        }  
+        }
+    }
+
+    public function pullOff(int $value, $login)
+    {
+        $userInfo = $this->getUser($login);
+        if (empty($userInfo)) {
+            throw new Exception('Пользователь не найден!');
+        }
+        try {
+            $this->conn->beginTransaction();
+            $this->conn->exec('lock tables billing');
+            //get current balans
+            $balans = $this->getBalans($login);
+            if ((int) $balans === 0) {
+                throw new Exception('У Вас отсутствуют средства на балансе!');
+            }
+            if ((int) $balans < (int) $value) {
+                throw new Exception('Сумма для вывода превышает текущий баланс!');
+            }
+            $newBalans = (int) $balans - (int) $value;
+            $st = $this->conn->prepare('update billing set value=:value where user_id=:userId');
+            $st->bindParam('value', $newBalans);
+            $st->bindParam('userId', $userInfo['id']);
+            $st->execute();
+            $this->conn->commit();
+            $this->conn->exec('unlock tables');
+        } catch (Exception $e) {
+            $this->conn->rollBack();
+            $this->conn->exec('unlock tables');
+            throw new Exception($e->getMessage());
+        }
     }
 }
