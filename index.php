@@ -2,12 +2,13 @@
 
 require_once './autoloader.php';
 
+use App\Controller\Base;
 use App\Routes;
 
 session_start();
 
 try {
-    $controller = new App\Controller\Base();
+    $controller = new Base();
     $routes = new Routes($controller);
     $routes->start();
 } catch (Exception $e) {

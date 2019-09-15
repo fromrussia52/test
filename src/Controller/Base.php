@@ -25,8 +25,8 @@ class Base
         if (preg_match('/[a-z][0-9a-z]*/i', $login) !== 1) {
             throw new \Exception('Ошибка валидации логина');
         }
-        if (preg_match('/.{6,}/i', $password) !== 1) {
-            throw new \Exception('Длина пароля должна быть больше 6 символов');
+        if (mb_strlen($password) < 6) {
+            throw new \Exception('Длина пароля не должна быть меньше 6 символов');
         }
         if ($this->users->login($login, $password) === false) {
             throw new \Exception('Ошибка аутентификации', 401);

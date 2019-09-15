@@ -27,14 +27,10 @@ class Routes
         } else {
             $aPath = explode('/', $this->path);
             array_shift($aPath);
-            if ($aPath[0] !== 'api' || count($aPath) > 2) {
+            if ($aPath[0] !== 'api' || count($aPath) > 2 || !in_array($aPath[1], $this->routes)) {
                 throw new \Exception('Роут ' . $this->path . ' не найден!', 404);
             }
 
-            if(!in_array($aPath[1], $this->routes)){
-                throw new \Exception('Роут ' . $this->path . ' не найден!', 404);
-            }
-            
             $method = 'action' . ucfirst($aPath[1]);
             $this->controller->{$method}();
         }
