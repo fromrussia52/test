@@ -1,14 +1,15 @@
 <?php
 
+require_once './autoloader.php';
+
+use App\Routes;
+
 session_start();
 
-require_once './src/Controller.php';
-require_once './src/Connection.php';
-require_once './src/Template.php';
-
 try {
-    $controller = new Controller();
-    $controller->start();
+    $controller = new App\Controller\Base();
+    $routes = new Routes($controller);
+    $routes->start();
 } catch (Exception $e) {
     $code = $e->getCode();
     switch ($code) {

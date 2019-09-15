@@ -21,14 +21,14 @@ USE `test`;
 DROP TABLE IF EXISTS `billing`;
 CREATE TABLE IF NOT EXISTS `billing` (
   `user_id` int(11) NOT NULL,
-  `value` bigint(20) NOT NULL
+  `value` double NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Дамп данных таблицы test.billing: ~0 rows (приблизительно)
+-- Дамп данных таблицы test.billing: ~1 rows (приблизительно)
 DELETE FROM `billing`;
 /*!40000 ALTER TABLE `billing` DISABLE KEYS */;
 INSERT INTO `billing` (`user_id`, `value`) VALUES
-	(1, 1220);
+	(1, 1190.6);
 /*!40000 ALTER TABLE `billing` ENABLE KEYS */;
 
 -- Дамп структуры для таблица test.users
