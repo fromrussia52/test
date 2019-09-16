@@ -2,12 +2,9 @@
 
 namespace App;
 
-use App\Template\Renderer;
-
 class Routes
 {
     private $path = null;
-    private $tmpl = null;
     private $routesMap = [];
     private $scheme = null;
     private $host = null;
@@ -19,7 +16,6 @@ class Routes
         $this->method = $_SERVER["REQUEST_METHOD"];
         $this->host = $_SERVER["REMOTE_ADDR"];
         $this->path = $_SERVER['PATH_INFO'] ?? '/';
-        $this->tmpl = new Renderer();
         $this->routesMap = [
             [
                 'route' => '/api/login',
@@ -69,47 +65,51 @@ class Routes
                 'method' => 'GET',
                 'controller' => 'App\\Controller\\BillingController',
                 'action' => 'pulloff'
+            ], [
+                'route' => '/',
+                'name' => 'index',
+                'scheme' => '.+',
+                'host' => '.+',
+                'method' => 'GET',
+                'controller' => 'App\\Controller\\IndexController',
+                'action' => 'index'
             ]
         ];
     }
 
-    public function start()
+    public function execute()
     {
-        if ($this->path === '/' || $this->path === '/index.php') {
-            $this->tmpl->render('index', ['title' => 'Тестовое приложение']);
-        } else {          
-            $error = null;
-            $markMatch = false;
-            $controller = null;
-            $action = null;
+        $error = null;
+        $markMatch = false;
+        $controller = null;
+        $action = null;
 
-            foreach ($this->routesMap as $routeInfo) {
-                if (preg_match('#' . $routeInfo['route'] . '/*#i', $this->path) !== 1) {
-                    continue;
-                }
-                if (preg_match('#' . $routeInfo['method'] . '#i', $this->method) !== 1) {
-                    $error = 'Разрешен метод ' . $routeInfo['method'];
-                    break;
-                }
-                if (preg_match('#' . $routeInfo['scheme'] . '#i', $this->scheme) !== 1) {
-                    $error = 'Разрешена схема ' . $routeInfo['scheme'];
-                    break;
-                }
-                if (preg_match('#' . $routeInfo['host'] . '#i', $this->host) !== 1) {
-                    $error = 'Разрешен хост ' . $routeInfo['host'];
-                    break;
-                }
-                $markMatch = true;
-                $controller = $routeInfo['controller'];
-                $action = $routeInfo['action'];
+        foreach ($this->routesMap as $routeInfo) {
+            if (strcasecmp($routeInfo['route'], $this->path) !== 0) {
+                continue;
+            }
+            if (preg_match('#' . $routeInfo['method'] . '#i', $this->method) !== 1) {
+                $error = 'Разрешен метод ' . $routeInfo['method'];
                 break;
             }
-
-            if($markMatch === false){
-                throw new \Exception('Роут ' . $this->method . ' ' . $this->path . ' не найден!' . (!empty($error) ? ' ' . $error : ''), 404);
+            if (preg_match('#' . $routeInfo['scheme'] . '#i', $this->scheme) !== 1) {
+                $error = 'Разрешена схема ' . $routeInfo['scheme'];
+                break;
             }
-
-            (new $controller)->{$action}();
+            if (preg_match('#' . $routeInfo['host'] . '#i', $this->host) !== 1) {
+                $error = 'Разрешен хост ' . $routeInfo['host'];
+                break;
+            }
+            $markMatch = true;
+            $controller = $routeInfo['controller'];
+            $action = $routeInfo['action'];
+            break;
         }
+
+        if ($markMatch === false) {
+            throw new \Exception('Роут ' . $this->method . ' ' . $this->path . ' не найден!' . (!empty($error) ? ' ' . $error : ''), 404);
+        }
+
+        (new $controller)->{$action}();
     }
 }
