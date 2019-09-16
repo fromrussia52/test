@@ -8,8 +8,7 @@ use App\Routes;
 session_start();
 
 try {
-    $controller = new Base();
-    $routes = new Routes($controller);
+    $routes = new Routes();
     $routes->start();
 } catch (Exception $e) {
     $code = $e->getCode();
